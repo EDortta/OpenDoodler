@@ -1,0 +1,24 @@
+name: Cross-platform core
+
+on:
+  push:
+    branches: [feature/cross-platform-desktop]
+  pull_request:
+
+jobs:
+  portable-libraries:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build cross-platform utilities
+        run: dotnet build src/OpenBoardAnim.Utilities/OpenBoardAnim.Utilities.csproj --configuration Release
+      - name: Build cross-platform persistence
+        run: dotnet build src/OpenBoardAnim.Library/OpenBoardAnim.Library.csproj --configuration Release
